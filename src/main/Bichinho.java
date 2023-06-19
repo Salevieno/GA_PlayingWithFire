@@ -10,10 +10,11 @@ public class Bichinho
 	private double gene = Math.random() ;
 	private double temperature ;
 	
+	private final static double MUTATION_RATE = 0.1 ;
 	private final static int INIT_TEMPERATURE = 100 ;
 	private final static int MAX_TEMPERATURE = 320 ;
 	private final static int MIN_TEMPERATURE = 80 ;
-	private final static int STEP = 5 ;
+	private final static int STEP = 3 ;
 	
 	public Bichinho()
 	{
@@ -59,6 +60,11 @@ public class Bichinho
 		double avrGene = (gene + partner.getGene()) / 2 ;
 		offspring.setPos(Math.random() <= 0.5 ? new Point(pos) : new Point(partner.getPos())) ;
 		offspring.setGene(avrGene) ;
+		
+		if (Math.random() <= MUTATION_RATE)
+		{
+			offspring.setGene(Math.random()) ;
+		}
 		
 		return offspring ;
 	}
