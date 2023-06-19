@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -11,6 +12,7 @@ import javax.swing.JPanel;
 public class Life extends JPanel
 {
 	private static final long serialVersionUID = 191402062127579281L;
+	
 	private Fogueira fogueira ;
 	private List<Bichinho> bichinhos ;
 	private int numberRound = 1 ;
@@ -19,10 +21,12 @@ public class Life extends JPanel
 	private List<Double> avrDistEvolution = new ArrayList<>() ;
 	
 	private final static int numBichinhos = 200 ;
-	private final static int numberRoundCheck = 200 ;
+	private final static int numberRoundCheck = 300 ;
 	
 	public Life()
 	{
+		this.setPreferredSize(new Dimension(500, 500)) ;
+		
 		fogueira = new Fogueira() ;
 		bichinhos = new ArrayList<>() ;
 		for (int i = 0 ; i <= numBichinhos - 1; i += 1)
@@ -30,6 +34,8 @@ public class Life extends JPanel
 			bichinhos.add(new Bichinho()) ;
 		}
 	}
+	
+	public Fogueira getFogueira() { return fogueira ;}
 	
 	private List<Bichinho> findSurvivors()
 	{
@@ -41,12 +47,9 @@ public class Life extends JPanel
 	
 	private void updateGeneration()
 	{
-		System.out.println() ;
 		System.out.println("Generation " + numberRound / numberRoundCheck + "!") ;
 		avrGeneEvolution.add((int) (100 * calcAvrGene()) / 100.0) ;
 		avrDistEvolution.add((int) (100 * calcAvrDist()) / 100.0) ;
-//		System.out.println("Avr gene: " + (int) (100 * calcAvrGene()) / 100.0) ;
-//		System.out.println("Avr dist: " + (int) (100 * calcAvrDist()) / 100.0) ;
 		
 
 		bichinhos.forEach(bichinho -> bichinho.updateTemperature(fogueira.getPos(), fogueira.getIntensity())) ;
@@ -99,6 +102,7 @@ public class Life extends JPanel
 		if (numberRound % numberRoundCheck == 0)
 		{
 			updateGeneration() ;
+			Main.getResultsPanel().repaint();
 		}
 		
 		if (numberRound % 10000 == 0)
@@ -116,10 +120,24 @@ public class Life extends JPanel
 //		System.out.println(numberRound) ;
 	}
 	
+	
+	
+	public List<Double> getAvrGeneEvolution()
+	{
+		return avrGeneEvolution;
+	}
+
+	public List<Double> getAvrDistEvolution()
+	{
+		return avrDistEvolution;
+	}
+
 	protected void paintComponent(Graphics g)
 	{
         super.paintComponent(g) ;
         DrawingOnPanel.setGraphics((Graphics2D) g) ;
+//		Border blackline = BorderFactory.createLineBorder(Color.black);		
+//		this.setBorder(blackline);
 
 		run() ;
         

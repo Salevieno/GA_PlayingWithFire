@@ -13,7 +13,7 @@ public class Bichinho
 	private final static int INIT_TEMPERATURE = 100 ;
 	private final static int MAX_TEMPERATURE = 320 ;
 	private final static int MIN_TEMPERATURE = 80 ;
-	private final static int STEP = 2 ;
+	private final static int STEP = 5 ;
 	
 	public Bichinho()
 	{
