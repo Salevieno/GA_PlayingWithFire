@@ -6,7 +6,7 @@ import java.awt.Point;
 public class Fogueira
 {
 	private Point pos ;
-	private static final Image image = Main.loadImage("./fogueira.png");
+	private static final Image image = Main.loadImage("./fogueira.gif");
 	private final int intensity = 400 ;
 	
 	public Fogueira()

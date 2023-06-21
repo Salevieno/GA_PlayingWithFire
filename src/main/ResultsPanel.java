@@ -28,10 +28,11 @@ public class ResultsPanel extends JPanel
         fogueira.display() ;
         
         List<Double> yValues = Main.getAvrGeneEvolution() ;
-        System.out.println(yValues);
+
         if (yValues.isEmpty()) { return ;}
         
         DrawingOnPanel.PlotGraph(new Point(50, 500), "Média dos genes", yValues, Color.blue) ;
+        
 	}
 	
 	protected void paintComponent(Graphics g)

@@ -97,7 +97,7 @@ public class Life extends JPanel
 	
 	public void run()
 	{
-		bichinhos.forEach(bichinho -> bichinho.move(fogueira.getPos())) ;
+		bichinhos.forEach(bichinho -> bichinho.move(fogueira.getPos(), fogueira.getIntensity())) ;
 		
 		if (numberRound % numberRoundCheck == 0)
 		{

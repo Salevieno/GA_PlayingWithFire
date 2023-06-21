@@ -5,11 +5,12 @@ import java.awt.Point;
 
 public class Bichinho
 {
-	private Point pos = new Point(250, 250) ;
-	private final Image image = Main.loadImage("./bichinho.png");
-	private double gene = Math.random() ;
+	private Point pos  ;
+	private double gene ;
 	private double temperature ;
-	
+
+	private final static Image image = Main.loadImage("./bichinho.png");
+	private final static int behavior = 1 ;
 	private final static double MUTATION_RATE = 0.1 ;
 	private final static int INIT_TEMPERATURE = 100 ;
 	private final static int MAX_TEMPERATURE = 320 ;
@@ -19,6 +20,7 @@ public class Bichinho
 	public Bichinho()
 	{
 		pos = generateInitialPos() ;
+		gene = Math.random() ;
 		temperature = INIT_TEMPERATURE ;
 	}
 	
@@ -39,7 +41,45 @@ public class Bichinho
 		return newPos ;
 	}
 	
-	public void move(Point fogueiraPos)
+	public void move(Point fogueiraPos, int fogueiraIntensity)
+	{
+		if (behavior == 0)
+		{
+			double angle = calcAngleToPoint(fogueiraPos, pos) ;
+			boolean irParaFogueira = Math.random() <= gene ;
+			if (irParaFogueira)
+			{
+				pos.x += STEP * Math.cos(angle) ;
+				pos.y += STEP * Math.sin(angle) ;
+			}
+			else
+			{
+				pos.x += -STEP * Math.cos(angle) ;
+				pos.y += -STEP * Math.sin(angle) ;
+			}
+		}
+		if (behavior == 1)
+		{
+//			moveAround(fogueiraPos) ;
+			if (distToFogueiraIsFine(fogueiraIntensity))
+			{
+				moveAround(fogueiraPos) ;
+			}
+			else
+			{
+				if (tooFarFromFogueira(fogueiraIntensity))
+				{
+					moveTowards(fogueiraPos) ;
+				}
+				else
+				{
+					moveAway(fogueiraPos) ;
+				}
+			}
+		}
+	}
+	
+	public void move4Dir(Point fogueiraPos)
 	{
 		if (Math.random() < gene)
 		{
@@ -99,10 +139,93 @@ public class Bichinho
 		return new Point(Main.randomIntFromTo(100, 360), Main.randomIntFromTo(100, 360)) ;
 	}
 	
-//	private boolean isWithinRange(Point pos)
-//	{
-//		return (0 <= pos.x & pos.x <= 500 & 0 <= pos.y & pos.y <= 500) ;
-//	}
+	private void moveTowards(Point targetPos)
+	{
+		double angle = calcAngleToPoint(targetPos, pos) ;
+
+		pos.x += STEP * Math.cos(angle) ;
+		pos.y += STEP * Math.sin(angle) ;
+	}
+	
+	private void moveAway(Point targetPos)
+	{
+		double angle = calcAngleToPoint(targetPos, pos) ;
+
+		pos.x += -STEP * Math.cos(angle) ;
+		pos.y += -STEP * Math.sin(angle) ;
+	}
+	
+	private void moveAround(Point targetPos)
+	{
+		double angle = calcAngleToPoint(targetPos, pos) ;
+
+		pos.x += STEP * Math.cos(angle + Math.PI / 2.0) ;
+		pos.y += STEP * Math.sin(angle + Math.PI / 2.0) ;
+	}
+	
+	private double calcAngleToPoint(Point startPoint, Point centerPoint)
+	{
+		
+		if (startPoint.equals(centerPoint)) { return 0 ;}
+		
+		double dx = centerPoint.x - startPoint.x ;
+		double dy = centerPoint.y - startPoint.y ;
+		double angle = 0 ;
+		
+		int quadrant = 0 ;
+		if (centerPoint.x <= startPoint.x & centerPoint.y <= startPoint.y) { quadrant = 0 ;}
+		if (startPoint.x <= centerPoint.x & centerPoint.y <= startPoint.y) { quadrant = 1 ;}
+		if (startPoint.x <= centerPoint.x & startPoint.y <= centerPoint.y) { quadrant = 2 ;}
+		if (centerPoint.x < startPoint.x & startPoint.y < centerPoint.y) { quadrant = 3 ;}
+
+		if (quadrant == 0)
+		{
+			angle = Math.atan(dy / dx) ;
+		}
+		if (quadrant == 1)
+		{
+			angle = Math.PI + Math.atan(dy / dx) ;
+		}
+		if (quadrant == 2)
+		{
+			angle = Math.PI + Math.atan(dy / dx) ;
+		}
+		if (quadrant == 3)
+		{
+			angle = 2 * Math.PI + Math.atan(dy / dx) ;
+		}
+
+		return angle ;
+		
+	}
+	
+	
+	// ********** Second implementation **************
+	
+	private boolean distToFogueiraIsFine(int fogueiraIntensity)
+	{
+		double preferredTemperature = fogueiraIntensity * gene ;
+		double minAcceptableTemperature = (1 - 0.1) * preferredTemperature ;
+		double maxAcceptableTemperature = (1 + 0.1) * preferredTemperature ;
+		
+		return minAcceptableTemperature <= temperature & temperature <= maxAcceptableTemperature ;		
+	}
+	
+	private boolean tooFarFromFogueira(int fogueiraIntensity)
+	{
+		double preferredTemperature = fogueiraIntensity * gene ;
+		double minAcceptableTemperature = (1 - 0.1) * preferredTemperature ;
+		
+		return temperature <= minAcceptableTemperature ;		
+	}
+	
+	private boolean tooCloseToFogueira(int fogueiraIntensity)
+	{
+		double preferredTemperature = fogueiraIntensity * gene ;
+		double maxAcceptableTemperature = (1 + 0.1) * preferredTemperature ;
+		
+		return maxAcceptableTemperature <= temperature ;	
+	}
 	
 	public Point getPos()
 	{
